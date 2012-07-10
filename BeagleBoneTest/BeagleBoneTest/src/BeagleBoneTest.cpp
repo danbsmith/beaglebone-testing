@@ -26,10 +26,9 @@ int main() {
 	digitalWrite(7, 1);
 	while (time < (15 * CLOCKS_PER_SEC)) {
 		temp_t = clock();
-		float delay = (float) analogRead(1);
-		cout << delay << endl;
-		if ((float) (temp_t - time)
-				>= delay * (float) (CLOCKS_PER_SEC / 2000)) {
+		//float delay = (float) analogRead(1);
+		//cout << delay << endl;
+		if ((temp_t - time) >= (CLOCKS_PER_SEC / 2000)) {
 			if (flag == 0) {
 				cout << "Set to high!" << endl;
 				digitalWrite(38, 1);

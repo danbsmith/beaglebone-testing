@@ -220,27 +220,40 @@ int digitalRead(int pin) {
 	return input;
 }
 
-int analogRead(int pin) {
-	ifstream valuepin;
-	int input;
-	char initpath[] = { '/', 's', 'y', 's', '/', 'd', 'e', 'v', 'i', 'c', 'e',
-			's', '/', 'p', 'l', 'a', 't', 'f', 'o', 'r', 'm', '/', 'o', 'm',
-			'a', 'p', '/', 't', 's', 'c', '/', 'a', 'i', 'n' };
-	char valuefilename[36];
-	char temppin[2] = { "0" };
-	for (int i = 0; i <= 33; i++) {
-		valuefilename[i] = initpath[i];
-	}
-	snprintf(temppin, 2, "%d", pin);
-	valuefilename[34] = temppin[0];
-	valuepin.open(valuefilename);
-	usleep(100);
-	valuepin >> input;
-	for (int i = 0; i < 33; i++) {
-	}
-	cout << input << endl;
-	valuepin.close();
-	return input;
+/** Ubuntu does not have the kernel modifications to use analog input pins *
+ int analogRead(int pin) {
+ ifstream valuepin;
+ int input;
+ char initpath[] = { '/', 's', 'y', 's', '/', 'd', 'e', 'v', 'i', 'c', 'e',
+ 's', '/', 'p', 'l', 'a', 't', 'f', 'o', 'r', 'm', '/', 'o', 'm',
+ 'a', 'p', '/', 't', 's', 'c', '/', 'a', 'i', 'n' };
+ char valuefilename[36];
+ char temppin[2] = { "0" };
+ for (int i = 0; i <= 33; i++) {
+ valuefilename[i] = initpath[i];
+ }
+ snprintf(temppin, 2, "%d", pin);
+ valuefilename[34] = temppin[0];
+ valuepin.open(valuefilename);
+ usleep(100);
+ valuepin >> input;
+ for (int i = 0; i < 33; i++) {
+ }
+ cout << input << endl;
+ valuepin.close();
+ return input;
+ }
+ */
+
+void enablePWMClock() {
+	// Just a placeholder
+}
+
+void setPWM(int pin, int duty, int freq) {
+// TODO: need to figure out pins
+//duty cycle is from 0 to 100
+//frequency will be used to adjust motors
+
 }
 
 void exportPin(int pin) {
