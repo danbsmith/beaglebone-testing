@@ -16,6 +16,6 @@ void digitalWrite(int pin, int value);
 int digitalRead(int pin);
 void exportPin(int pin);
 void unExportPin(int pin);
-void enablePWMCLock();
+void enablePWMMUX(int pin);
 void setPWM(int pin1, int pin2, int val, int freq);
 #endif /* DIGITALIO_H_ */

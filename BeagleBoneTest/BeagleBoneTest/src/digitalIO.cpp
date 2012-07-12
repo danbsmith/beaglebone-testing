@@ -245,9 +245,38 @@ int digitalRead(int pin) {
  }
  */
 
-void enablePWMClock() {
-	// Just a placeholder
-	// TODO: Learn to set registers from C++
+void enablePWMMUX(int pin) { // pretend there is a colon between the digits of pin,
+	// and if there is only 1, put a zero in front
+	ofstream muxout;
+	// complicated filename chooser and stream opener and writer
+	switch(pin)
+	{
+	case 0:
+		muxout.open("/sys/kernel/debug/omap_mux/spi_sclk", ios::trunc); // 22 on P9 header
+		muxout << 3;
+	break;
+	case 1:
+		muxout.open("/sys/kernel/debug/omap_mux/spi_d0", ios::trunc); // 21 on P9 header
+		muxout << 3;
+	break;
+	case 10:
+		muxout.open("/sys/kernel/debug/omap_mux/gpmc_ad2"); // 5 on P8 header
+		muxout << 6;
+	break;
+	case 11:
+		muxout.open("/sys/kernel/debug/omap_mux/gpmc_ad3"); // 6 on P8 header
+		muxout << 6;
+	break;
+	case 20:
+		muxout.open("/sys/kernel/debug/omap_mux/gpmc_ad8"); // 19 on P8 header
+		muxout << 4;
+	break;
+	case 21:
+		muxout.open("/sys/kernel/debug/omap_mux/gpmc_ad9"); // 13 on P8 header
+				muxout << 4;
+	break;
+	}
+	muxout.close();
 }
 
 void setPWM(int pin1, int pin2, int duty, int freq) {
