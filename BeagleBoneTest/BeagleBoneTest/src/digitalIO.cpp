@@ -247,13 +247,60 @@ int digitalRead(int pin) {
 
 void enablePWMClock() {
 	// Just a placeholder
+	// TODO: Learn to set registers from C++
 }
 
-void setPWM(int pin, int duty, int freq) {
-// TODO: need to figure out pins
-//duty cycle is from 0 to 100
-//frequency will be used to adjust motors
-
+void setPWM(int pin1, int pin2, int duty, int freq) {
+//frequency will be used to adjust motors (f = 1/lambda, where lambda ranges from 1000 to 2000 us)
+	ofstream freqpin;
+	ofstream dutypercentpin;
+	char initpath[] = { '/', 's', 'y', 's', '/', 'c', 'l', 'a', 's', 's', '/',
+			'p', 'w', 'm', '/', 'e', 'h', 'r', 'p', 'w', 'm', '.' };
+	char dfpath[] = { '/', 'd', 'u', 't', 'y', '_', 'p', 'e', 'r', 'c', 'e',
+			'n', 't' };
+	char ffpath[] =
+			{ '/', 'p', 'e', 'r', 'i', 'o', 'd', '_', 'f', 'r', 'e', 'q' };
+	char dutyfilename[39] = { '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '0' };
+	char frequencyfilename[38] = { '0', '0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '0' };
+	char temppin1[2] = { "0" };
+	char temppin2[2] = { "0" };
+	for (int i = 0; i <= 21; i++) {
+		dutyfilename[i] = initpath[i];
+		frequencyfilename[i] = initpath[i];
+	}
+	snprintf(temppin1, 2, "%d", pin1);
+	dutyfilename[22] = temppin1[0];
+	frequencyfilename[22] = temppin1[0];
+	dutyfilename[23] = ':';
+	frequencyfilename[23] = ':';
+	snprintf(temppin2, 2, "%d", pin2);
+	dutyfilename[24] = temppin2[0];
+	frequencyfilename[24] = temppin2[0];
+	int j = 0;
+	for (int i = 25; i <= 38; i++) {
+		dutyfilename[i] = dfpath[j];
+		j++;
+	}
+	j = 0;
+	for (int i = 25; i <= 37; i++) {
+		frequencyfilename[i] = ffpath[j];
+		j++;
+	}
+	dutypercentpin.open(dutyfilename, ios::trunc);
+	freqpin.open(frequencyfilename, ios::trunc);
+	dutypercentpin << 0;
+	dutypercentpin.close();
+	freqpin << freq;
+	dutypercentpin.open(dutyfilename, ios::trunc);
+	dutypercentpin << duty;
+	dutypercentpin.close();
+	freqpin.close();
 }
 
 void exportPin(int pin) {
