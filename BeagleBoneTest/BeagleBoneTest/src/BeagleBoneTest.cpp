@@ -17,15 +17,15 @@ int main() {
 	clock_t time = clock();
 	clock_t temp_t;
 	temp_t = clock();
-	enablePWMMUX(10);
-	setPWM(1,0,50,100);
+	enablePWMMUX(1);
+	setPWM(0, 1, 50, 150, 1);
 	while (time < (15 * CLOCKS_PER_SEC)) {
 		temp_t = clock();
 		//float delay = (float) analogRead(1);
 		//cout << delay << endl;
-			time = clock();
+		time = clock();
 		temp_t = clock();
 	}
-	setPWM(1,0,0,100);
+	setPWM(1, 0, 40, 100, 0);
 	return 0;
 }

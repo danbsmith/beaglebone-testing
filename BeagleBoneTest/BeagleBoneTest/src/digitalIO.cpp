@@ -249,46 +249,47 @@ void enablePWMMUX(int pin) { // pretend there is a colon between the digits of p
 	// and if there is only 1, put a zero in front
 	ofstream muxout;
 	// complicated filename chooser and stream opener and writer
-	switch(pin)
-	{
+	switch (pin) {
 	case 0:
-		muxout.open("/sys/kernel/debug/omap_mux/spi_sclk", ios::trunc); // 22 on P9 header
+		muxout.open("/sys/kernel/debug/omap_mux/spi0_sclk", ios::trunc); // 22 on P9 header
 		muxout << 3;
-	break;
+		break;
 	case 1:
-		muxout.open("/sys/kernel/debug/omap_mux/spi_d0", ios::trunc); // 21 on P9 header
+		muxout.open("/sys/kernel/debug/omap_mux/spi0_d0", ios::trunc); // 21 on P9 header
 		muxout << 3;
-	break;
+		break;
 	case 10:
-		muxout.open("/sys/kernel/debug/omap_mux/gpmc_ad2"); // 5 on P8 header
+		muxout.open("/sys/kernel/debug/omap_mux/gpmc_ad2"); // 14 on P9 header
 		muxout << 6;
-	break;
+		break;
 	case 11:
-		muxout.open("/sys/kernel/debug/omap_mux/gpmc_ad3"); // 6 on P8 header
+		muxout.open("/sys/kernel/debug/omap_mux/gpmc_ad3"); // 16 on P9 header
 		muxout << 6;
-	break;
+		break;
 	case 20:
 		muxout.open("/sys/kernel/debug/omap_mux/gpmc_ad8"); // 19 on P8 header
 		muxout << 4;
-	break;
+		break;
 	case 21:
 		muxout.open("/sys/kernel/debug/omap_mux/gpmc_ad9"); // 13 on P8 header
-				muxout << 4;
-	break;
+		muxout << 4;
+		break;
 	}
 	muxout.close();
 }
 
-void setPWM(int pin1, int pin2, int duty, int freq) {
+void setPWM(int pin1, int pin2, int duty, int freq, int run) {
 //frequency will be used to adjust motors (f = 1/lambda, where lambda ranges from 1000 to 2000 us)
 	ofstream freqpin;
 	ofstream dutypercentpin;
+	ofstream pinrun;
 	char initpath[] = { '/', 's', 'y', 's', '/', 'c', 'l', 'a', 's', 's', '/',
 			'p', 'w', 'm', '/', 'e', 'h', 'r', 'p', 'w', 'm', '.' };
 	char dfpath[] = { '/', 'd', 'u', 't', 'y', '_', 'p', 'e', 'r', 'c', 'e',
 			'n', 't' };
 	char ffpath[] =
 			{ '/', 'p', 'e', 'r', 'i', 'o', 'd', '_', 'f', 'r', 'e', 'q' };
+	char rfpath[] = { '/', 'r', 'u', 'n' };
 	char dutyfilename[39] = { '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
 			'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
 			'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
@@ -297,39 +298,79 @@ void setPWM(int pin1, int pin2, int duty, int freq) {
 			'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
 			'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
 			'0', '0' };
+	char runfilename[30] = { '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '0', '0', '0', '0', '0' };
 	char temppin1[2] = { "0" };
 	char temppin2[2] = { "0" };
 	for (int i = 0; i <= 21; i++) {
 		dutyfilename[i] = initpath[i];
 		frequencyfilename[i] = initpath[i];
+		runfilename[i] = initpath[i];
 	}
 	snprintf(temppin1, 2, "%d", pin1);
 	dutyfilename[22] = temppin1[0];
 	frequencyfilename[22] = temppin1[0];
+	runfilename[22] = temppin1[0];
+	runfilename[23] = ':';
 	dutyfilename[23] = ':';
 	frequencyfilename[23] = ':';
 	snprintf(temppin2, 2, "%d", pin2);
 	dutyfilename[24] = temppin2[0];
 	frequencyfilename[24] = temppin2[0];
+	runfilename[24] = temppin2[0];
 	int j = 0;
 	for (int i = 25; i <= 38; i++) {
 		dutyfilename[i] = dfpath[j];
 		j++;
 	}
 	j = 0;
-	for (int i = 25; i <= 37; i++) {
+	for (int i = 25; i <= 36; i++) {
 		frequencyfilename[i] = ffpath[j];
 		j++;
 	}
-	dutypercentpin.open(dutyfilename, ios::trunc);
+	j = 0;
+	for (int i = 25; i <= 28; i++) {
+		runfilename[i] = rfpath[j];
+		j++;
+	}
+	for (int i = 0; i <= 37; i++) {
+		cout << dutyfilename[i];
+	}
+	cout << endl << endl;
+	for (int i = 0; i <= 37; i++) {
+		cout << frequencyfilename[i];
+	}
+	cout << endl << endl;
+	for (int i = 0; i <= 30; i++) {
+		cout << runfilename[i];
+	}
+	cout << endl << endl;
+	dutypercentpin.open(dutyfilename);
 	freqpin.open(frequencyfilename, ios::trunc);
-	dutypercentpin << 0;
-	dutypercentpin.close();
+	pinrun.open(runfilename, ios::trunc);
+	if (dutypercentpin.is_open()) {
+		cout << "Duty = : " << duty << endl;
+	} else {
+		cout << "Duty not written to file" << endl;
+	}
+	if (pinrun.is_open()) {
+		cout << "Running = : " << run << endl;
+	} else {
+		cout << "Run not written to file" << endl;
+	}
+	if (freqpin.is_open()) {
+
+		cout << "Frequency = : " << freq << endl;
+	} else {
+		cout << "Freq not written to file" << endl;
+	}
 	freqpin << freq;
-	dutypercentpin.open(dutyfilename, ios::trunc);
 	dutypercentpin << duty;
+	pinrun << run;
 	dutypercentpin.close();
 	freqpin.close();
+	pinrun.close();
 }
 
 void exportPin(int pin) {
