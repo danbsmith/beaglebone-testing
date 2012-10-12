@@ -278,8 +278,8 @@ void enablePWMMUX(int pin) { // pretend there is a colon between the digits of p
 	muxout.close();
 }
 
-void setPWM(int pin1, int pin2, int duty, int freq, int run) {
-//frequency will be used to adjust motors (f = 1/lambda, where lambda ranges from 1000 to 2000 us)
+void setPWM(int pin1, int pin2, long int duty, long int freq, int run) {
+//frequency will be used to adjust motors (f = 1/(2*lambda), where lambda ranges from 1000 to 2000 us)
 	ofstream freqpin;
 	ofstream dutypercentpin;
 	ofstream pinrun;
@@ -290,11 +290,11 @@ void setPWM(int pin1, int pin2, int duty, int freq, int run) {
 	char ffpath[] =
 			{ '/', 'p', 'e', 'r', 'i', 'o', 'd', '_', 'f', 'r', 'e', 'q' };
 	char rfpath[] = { '/', 'r', 'u', 'n' };
-	char dutyfilename[39] = { '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+	char dutyfilename[39] = { '0', '0', '0', '0', '0', '0', '0', '0', '0',
 			'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
 			'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
-			'0', '0' };
-	char frequencyfilename[38] = { '0', '0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '0', '0' };
+	char frequencyfilename[37] = { '0', '0', '0', '0', '0', '0', '0', '0', '0',
 			'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
 			'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
 			'0', '0' };
@@ -320,7 +320,7 @@ void setPWM(int pin1, int pin2, int duty, int freq, int run) {
 	frequencyfilename[24] = temppin2[0];
 	runfilename[24] = temppin2[0];
 	int j = 0;
-	for (int i = 25; i <= 38; i++) {
+	for (int i = 25; i < 38; i++) {
 		dutyfilename[i] = dfpath[j];
 		j++;
 	}
@@ -337,39 +337,39 @@ void setPWM(int pin1, int pin2, int duty, int freq, int run) {
 	for (int i = 0; i <= 37; i++) {
 		cout << dutyfilename[i];
 	}
-	cout << endl << endl;
-	for (int i = 0; i <= 37; i++) {
+	cout << endl;
+	for (int i = 0; i <= 36; i++) {
 		cout << frequencyfilename[i];
 	}
-	cout << endl << endl;
-	for (int i = 0; i <= 30; i++) {
+	cout << endl;
+	for (int i = 0; i <= 28; i++) {
 		cout << runfilename[i];
 	}
-	cout << endl << endl;
-	dutypercentpin.open(dutyfilename);
+	cout << endl;
 	freqpin.open(frequencyfilename, ios::trunc);
 	pinrun.open(runfilename, ios::trunc);
-	if (dutypercentpin.is_open()) {
-		cout << "Duty = : " << duty << endl;
-	} else {
-		cout << "Duty not written to file" << endl;
-	}
-	if (pinrun.is_open()) {
-		cout << "Running = : " << run << endl;
-	} else {
-		cout << "Run not written to file" << endl;
-	}
+	dutypercentpin.open(dutyfilename, ios::trunc);
+	freqpin << freq;
 	if (freqpin.is_open()) {
 
-		cout << "Frequency = : " << freq << endl;
+		cout << "Frequency = " << freq << endl;
 	} else {
 		cout << "Freq not written to file" << endl;
 	}
-	freqpin << freq;
-	dutypercentpin << duty;
-	pinrun << run;
-	dutypercentpin.close();
 	freqpin.close();
+	dutypercentpin << duty;
+	if (dutypercentpin.is_open()) {
+		cout << "Duty = " << duty << endl;
+	} else {
+		cout << "Duty not written to file" << endl;
+	}
+	dutypercentpin.close();
+	pinrun << run;
+	if (pinrun.is_open()) {
+		cout << "Running = " << run << endl;
+	} else {
+		cout << "Run not written to file" << endl;
+	}
 	pinrun.close();
 }
 

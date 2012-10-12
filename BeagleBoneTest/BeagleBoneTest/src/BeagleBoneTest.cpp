@@ -18,7 +18,7 @@ int main() {
 	clock_t temp_t;
 	temp_t = clock();
 	enablePWMMUX(1);
-	setPWM(0, 1, 50, 150, 1);
+	setPWM(0, 1, 50, 1000, 1);
 	while (time < (15 * CLOCKS_PER_SEC)) {
 		temp_t = clock();
 		//float delay = (float) analogRead(1);
@@ -26,6 +26,6 @@ int main() {
 		time = clock();
 		temp_t = clock();
 	}
-	setPWM(1, 0, 40, 100, 0);
+	setPWM(0, 1, 0, 1, 0);
 	return 0;
 }
